@@ -1,0 +1,2 @@
+class KastenDataType(str):
+    pass
