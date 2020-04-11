@@ -1,0 +1,6 @@
+venv/*
+kasten/__pycache__/*
+testdata/*
+.vscode/*
+.mypy_cache/*
+kasten.egg-info/*
