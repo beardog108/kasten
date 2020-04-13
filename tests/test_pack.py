@@ -27,6 +27,15 @@ class TestPack(unittest.TestCase):
         data = os.urandom(10)
         self.assertRaises(exceptions.InvalidKastenTypeLength, pack.pack, data, 'aaaaa', 1)
 
+    def test_invalid_enc_mode(self):
+        data = os.urandom(10)
+        self.assertRaises(exceptions.InvalidEncryptionMode, pack.pack, data, 'txt', None)
+        self.assertRaises(exceptions.InvalidEncryptionMode, pack.pack, data, 'txt', "100")
+        self.assertRaises(exceptions.InvalidEncryptionMode, pack.pack, data, 'txt', 100)
+        self.assertRaises(exceptions.InvalidEncryptionMode, pack.pack, data, 'txt', -1)
+        self.assertRaises(exceptions.InvalidEncryptionMode, pack.pack, data, 'txt', -5)
+        self.assertRaises(exceptions.InvalidEncryptionMode, pack.pack, data, 'txt', "test")
+
 
 
 unittest.main()

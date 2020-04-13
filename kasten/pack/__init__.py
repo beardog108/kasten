@@ -24,10 +24,14 @@ def pack(data: bytes, data_type: 'KastenDataType',
     if not data_type or len(data_type) > 4:
         raise exceptions.InvalidKastenTypeLength
 
-    # Ensure encryption mode is valid (asymmetric, symmetric, plaintext)
-    enc_mode = int(enc_mode)
-    if enc_mode not in range(3):
-        raise
+    # Ensure encryption mode is in [0, 100)
+    try:
+        enc_mode = int(enc_mode)
+    except (TypeError, ValueError):
+        raise exceptions.InvalidEncryptionMode
+    if not enc_mode >= 0 or enc_mode >= 100:
+        raise exceptions.InvalidEncryptionMode
+    
     try:
         data = data.encode('utf8')
     except AttributeError:
