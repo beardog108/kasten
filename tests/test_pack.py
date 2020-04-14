@@ -1,7 +1,7 @@
 import unittest
 import os
 
-from kasten import pack
+from kasten.generator import pack
 from kasten import exceptions
 
 
@@ -11,14 +11,14 @@ class TestPack(unittest.TestCase):
         data = os.urandom(10)
         packed = pack.pack(data, 'bin', 0)
         parts = packed.split(b'\n', 1)
-        self.assertEqual(parts[0], b'\x92\xa3bin\x00\xc4\x01')
+        self.assertEqual(parts[0], b'\x93\xa3bin\x00\xce^\x95\x82:\xc4\x01')
         self.assertEqual(parts[1], data)
 
     def test_linebreak_data(self):
         data = os.urandom(9) + b'\n' + b"okay"
         packed = pack.pack(data, 'bin', 0)
         parts = packed.split(b'\n', 1)
-        self.assertEqual(parts[0], b'\x92\xa3bin\x00\xc4\x01')
+        self.assertEqual(parts[0], b'\x93\xa3bin\x00\xce^\x95\x82:\xc4\x01')
         self.assertEqual(parts[1], data)
 
     def test_invalid_data_type(self):

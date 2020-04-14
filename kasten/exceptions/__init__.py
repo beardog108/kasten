@@ -7,3 +7,7 @@ class InvalidKastenTypeLength(KastenException):
 
 class InvalidEncryptionMode(KastenException):
     pass
+
+class InvalidID(KastenException):
+    pass
+

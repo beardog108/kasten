@@ -10,15 +10,22 @@ encrypted with specified mode:
 data: bytes
 
 """
+from math import floor
+from time import time
+
 from msgpack import packb
 
-from .. import exceptions
+from kasten import exceptions
+
+from kasten.types import KastenPacked
 
 
 def pack(data: bytes, data_type: 'KastenDataType',
          enc_mode: 'KastenEncryptionModeID',
          signer: bytes = None, signature: bytes = None,
-         app_metadata: 'KastenSerializeableDict' = None) -> 'PreparedKasten':
+         app_metadata: 'KastenSerializeableDict' = None,
+         timestamp: int = None
+         ) ->  KastenPacked:
 
     # Ensure data type does not exceed 4 characters
     if not data_type or len(data_type) > 4:
@@ -31,13 +38,17 @@ def pack(data: bytes, data_type: 'KastenDataType',
         raise exceptions.InvalidEncryptionMode
     if not enc_mode >= 0 or enc_mode >= 100:
         raise exceptions.InvalidEncryptionMode
-    
+
     try:
         data = data.encode('utf8')
     except AttributeError:
         pass
+    if timestamp is None:
+        timestamp = floor(time())
+    assert int(timestamp)
 
-    kasten_header = [data_type, enc_mode]
+
+    kasten_header = [data_type, enc_mode, timestamp]
     if signer:
         if signature is None:
             raise ValueError("Signer specified without signature")
