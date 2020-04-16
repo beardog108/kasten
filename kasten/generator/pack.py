@@ -45,8 +45,7 @@ def pack(data: bytes, data_type: 'KastenDataType',
         pass
     if timestamp is None:
         timestamp = floor(time())
-    assert int(timestamp)
-
+    timestamp = int(timestamp)
 
     kasten_header = [data_type, enc_mode, timestamp]
     if signer:
@@ -56,6 +55,6 @@ def pack(data: bytes, data_type: 'KastenDataType',
     if app_metadata is not None:
         kasten_header.append(app_metadata)
 
-    kasten_header = packb(kasten_header) + packb(b'\n')
-
+    kasten_header = packb(kasten_header) + b'\n'
+    print(kasten_header + data)
     return kasten_header + data
