@@ -2,11 +2,6 @@ from typing import Tuple
 from typing import NewType
 from typing import NamedTuple
 
-KastenDataType = NewType('KastenDataType', str)
-
-class KastenDataType(str):
-
-    pass
 
 
 class KastenPacked(bytes):
