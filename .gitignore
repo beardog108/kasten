@@ -4,3 +4,4 @@ testdata/*
 .vscode/*
 .mypy_cache/*
 kasten.egg-info/*
+kasten/exceptions/__pycache__/*
