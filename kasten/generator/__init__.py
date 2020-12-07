@@ -46,6 +46,10 @@ class KastenMimcGenerator:
 
     @staticmethod
     def validate_id(hash: KastenChecksum, packed_bytes: KastenPacked, rounds = 5000) -> None:
+        try:
+            hash = int.from_bytes(hash, byteorder="big")
+        except TypeError:
+            pass
         if not vdf_verify(packed_bytes, hash, rounds):
             raise InvalidID
         return None

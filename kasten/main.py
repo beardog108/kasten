@@ -26,20 +26,25 @@ class Kasten:
                  id: KastenChecksum,
                  packed_bytes: KastenPacked,
                  generator: 'KastenBaseGenerator',  # noqa
-                 auto_check_generator = True):  # noqa
-        if auto_check_generator:
-            generator.validate_id(id, packed_bytes)
+                 *additional_generator_args,
+                 auto_check_generator=True,
+                 **additional_generator_kwargs):  # noqa
         self.id = id
         self.generator = generator
         header, data = packed_bytes.split(b'\n', 1)
         header = unpackb(header, strict_map_key=True)
         self.header = header
         self.data = data
+        self.additional_generator_args = list(additional_generator_args)
+        self.additional_generator_kwargs = dict(additional_generator_kwargs)
+        if auto_check_generator:
+            self.check_generator()
 
     def check_generator(self, generator=None):
         packed = self.get_packed()
         if generator is None:
-            self.generator.validate_id(self.id, packed)
+            self.generator.validate_id(
+                self.id, packed, *self.additional_generator_args, **self.additional_generator_kwargs)
         else:
             generator(self.id, packed)
 

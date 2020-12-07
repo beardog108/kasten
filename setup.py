@@ -6,11 +6,11 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(name='kasten',
-      version='0.0.7',
+      version='0.1.0',
       description='Efficient, secure data serialization format with extensibility.',
       author='Kevin Froman',
       author_email='beardog@mailbox.org',
-      url='https://chaoswebs.net',
+      url='https://git.voidnet.tech/kev/kasten',
       packages=find_packages(exclude=['contrib', 'docs', 'tests']),
       python_requires='>3.6.0',
       install_requires=['msgpack', 'mimcvdf>=1.1.0'],
