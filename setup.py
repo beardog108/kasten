@@ -6,7 +6,7 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(name='kasten',
-      version='0.1.0',
+      version='0.2.0',
       description='Efficient, secure data serialization format with extensibility.',
       author='Kevin Froman',
       author_email='beardog@mailbox.org',

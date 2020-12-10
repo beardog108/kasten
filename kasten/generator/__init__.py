@@ -41,11 +41,19 @@ class KastenBaseGenerator:
 
 class KastenMimcGenerator:
     @classmethod
-    def generate(cls, packed_bytes: KastenPacked, rounds: int = 5000) -> Kasten:
-        return Kasten(vdf_create(packed_bytes, rounds, dec=True).to_bytes(64, "big"), packed_bytes, cls, auto_check_generator=False)
+    def generate(
+            cls, packed_bytes: KastenPacked, rounds: int = 5000) -> Kasten:
+        return Kasten(
+            vdf_create(
+                packed_bytes,
+                rounds, dec=True
+                ).to_bytes(
+                    64, "big"), packed_bytes, cls, auto_check_generator=False)
 
     @staticmethod
-    def validate_id(hash: KastenChecksum, packed_bytes: KastenPacked, rounds = 5000) -> None:
+    def validate_id(
+            hash: KastenChecksum,
+            packed_bytes: KastenPacked, rounds=5000) -> None:
         try:
             hash = int.from_bytes(hash, byteorder="big")
         except TypeError:

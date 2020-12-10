@@ -3,7 +3,7 @@ from hashlib import sha3_384
 
 from kasten import Kasten
 from kasten import exceptions
-from kasten.generator import KastenBaseGenerator
+from kasten.generator import KastenBaseGenerator, pack
 
 
 class TestKastenBaseGenerator(unittest.TestCase):
@@ -13,7 +13,31 @@ class TestKastenBaseGenerator(unittest.TestCase):
 
     def test_kasten_invalid(self):
         k = b'\x93\xa3txt\x01\xce^\x97\xe3\xdc\ntest'
-        self.assertRaises(exceptions.InvalidID, Kasten, sha3_384(k + b'invalid').digest(), k, KastenBaseGenerator)
+        self.assertRaises(
+            exceptions.InvalidID,
+            Kasten, sha3_384(k + b'invalid').digest(), k, KastenBaseGenerator)
+
+    def test_kasten_get_metadata(self):
+        metadata = {"name": "john", "raw": b"are we having fun yet?"}
+        packed = pack.pack(b"test msg", "tst", 0, app_metadata=metadata)
+        K = Kasten(sha3_384(packed).digest(), packed, KastenBaseGenerator)
+        self.assertEqual(K.get_metadata(), metadata)
+
+    def test_kasten_unsafe_deserialize(self):
+        class Person:
+            def __init__(self, n):
+                self.name = n
+        kevin = Person("kevin")
+        metadata = {
+            "name": "john", "raw": b"are we having fun yet?", "person": kevin}
+        try:
+            packed = pack.pack(b"test msg", "tst", 0, app_metadata=metadata)
+            K = Kasten(sha3_384(packed).digest(), packed, KastenBaseGenerator)
+        except TypeError:
+            pass
+        else:
+            raise Exception("Serialized custom type in packer")
+
 
 
 unittest.main()

@@ -32,7 +32,9 @@ class Kasten:
         self.id = id
         self.generator = generator
         header, data = packed_bytes.split(b'\n', 1)
-        header = unpackb(header, strict_map_key=True)
+        header = unpackb(
+            header,
+            strict_map_key=True)
         self.header = header
         self.data = data
         self.additional_generator_args = list(additional_generator_args)
@@ -51,8 +53,15 @@ class Kasten:
     # Getters are gross, but they are used here to preserve space
 
     def get_packed(self) -> KastenPacked:
+        def _get_or_none(func):
+            try:
+                ret = func()
+            except IndexError:
+                return None
+            return ret
         return pack.pack(self.data, self.get_data_type(),
                          self.get_encryption_mode(),
+                         app_metadata=_get_or_none(self.get_metadata),
                          timestamp=self.get_timestamp())
 
     def get_data_type(self) -> str: return self.header[0]
@@ -60,3 +69,5 @@ class Kasten:
     def get_encryption_mode(self): return self.header[1]
 
     def get_timestamp(self): return self.header[2]
+
+    def get_metadata(self): return self.header[3]
