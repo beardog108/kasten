@@ -58,9 +58,13 @@ class Kasten:
                 ret = func()
             except IndexError:
                 return None
+            except TypeError:
+                return None
             return ret
         return pack.pack(self.data, self.get_data_type(),
                          self.get_encryption_mode(),
+                         signer=_get_or_none(self.get_signer),
+                         signature=_get_or_none(self.get_signature),
                          app_metadata=_get_or_none(self.get_metadata),
                          timestamp=self.get_timestamp())
 
@@ -70,4 +74,8 @@ class Kasten:
 
     def get_timestamp(self): return self.header[2]
 
-    def get_metadata(self): return self.header[3]
+    def get_signer(self): return self.header[3][0]
+
+    def get_signature(self): return self.header[3][1]
+
+    def get_metadata(self): return self.header[4]

@@ -8,11 +8,11 @@ from kasten.generator import KastenBaseGenerator, pack
 
 class TestKastenBaseGenerator(unittest.TestCase):
     def test_kasten(self):
-        k = b'\x93\xa3txt\x01\xce^\x97\xe3\xdc\ntest'
+        k = b'\x95\xa3tst\x00\x00\x92\xc4\x00\xc4\x00\xc0\ntest data'
         K = Kasten(sha3_384(k).digest(), k, KastenBaseGenerator)
 
     def test_kasten_invalid(self):
-        k = b'\x93\xa3txt\x01\xce^\x97\xe3\xdc\ntest'
+        k = b'\x95\xa3tst\x00\x00\x92\xc4\x00\xc4\x00\xc0\ntest data'
         self.assertRaises(
             exceptions.InvalidID,
             Kasten, sha3_384(k + b'invalid').digest(), k, KastenBaseGenerator)

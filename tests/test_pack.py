@@ -19,7 +19,7 @@ class TestPack(unittest.TestCase):
         self.assertEqual(unpacked[0], 'bin')
         self.assertEqual(unpacked[1], 0)
         self.assertAlmostEqual(unpacked[2], t)
-        self.assertEqual(len(unpacked), 3)
+        self.assertEqual(len(unpacked), 5)
 
     def test_unsigned_with_meta(self):
         data = os.urandom(10)
@@ -30,8 +30,8 @@ class TestPack(unittest.TestCase):
         self.assertEqual(unpacked[0], 'bin')
         self.assertEqual(unpacked[1], 0)
         self.assertAlmostEqual(unpacked[2], t)
-        self.assertEqual(unpacked[3], {"meme": "doge"})
-        self.assertEqual(len(unpacked), 4)
+        self.assertEqual(unpacked[4], {"meme": "doge"})
+        self.assertEqual(len(unpacked), 5)
 
     def test_linebreak_data(self):
         data = os.urandom(10) + b'\n'

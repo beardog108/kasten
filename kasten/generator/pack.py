@@ -45,17 +45,33 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 
-def pack(data: bytes, data_type: '',
+def pack(data: bytes, data_type: str,
          enc_mode: 'KastenEncryptionModeID',
          signer: bytes = None, signature: bytes = None,
          app_metadata: 'KastenSerializeableDict' = None,
          timestamp: int = None
-         ) ->  KastenPacked:
+         ) -> KastenPacked:
     """Create KastenPacked bytes sequence but do not ID or run through generator"""
 
+
+    # Final data will be:
+    # msgpack.packb([data_type, enc_mode, timestamp, (signer, signature), {app_metadata}]) \
+    # + b'\n' + data
     # Ensure data type does not exceed 4 characters
     if not data_type or len(data_type) > 4:
         raise exceptions.InvalidKastenTypeLength
+
+    try:
+        data_type = data_type.decode('utf8')
+    except AttributeError:
+        pass
+
+    if signer:
+        if signature is None:
+            raise ValueError("Signer specified without signature")
+    else:
+        signer = b''
+        signature = b''
 
     # Ensure encryption mode is in [0, 100)
     try:
@@ -74,12 +90,8 @@ def pack(data: bytes, data_type: '',
     timestamp = int(timestamp)
 
     kasten_header = [data_type, enc_mode, timestamp]
-    if signer:
-        if signature is None:
-            raise ValueError("Signer specified without signature")
-        kasten_header.extend((signer, signature))
-    if app_metadata is not None:
-        kasten_header.append(app_metadata)
+    kasten_header.append((signer, signature))
+    kasten_header.append(app_metadata)
 
     kasten_header = packb(kasten_header) + b'\n'
     return kasten_header + data
