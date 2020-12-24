@@ -14,3 +14,7 @@ class InvalidID(KastenException):
     """Occurs when a Kasten generator fails validation, which means data does not match KastenChecksum"""
     pass
 
+class InvalidPackedBytes(KastenException):
+    """Occurs when packed bytes cannot be deserialized"""
+    pass
+

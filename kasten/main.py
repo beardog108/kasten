@@ -1,9 +1,13 @@
 """Main Kasten object, does nothing but provide access to packed Kasten bytes and call a specified generator function"""
+import traceback
+
 from msgpack import unpackb
+import msgpack
 
 from .types import KastenChecksum
 from .types import KastenPacked
 from .generator import pack
+from .exceptions import InvalidPackedBytes
 """
 Copyright (C) <2020>  Kevin Froman
 
@@ -31,10 +35,20 @@ class Kasten:
                  **additional_generator_kwargs):  # noqa
         self.id = id
         self.generator = generator
-        header, data = packed_bytes.split(b'\n', 1)
-        header = unpackb(
-            header,
-            strict_map_key=True)
+        try:
+            header, data = packed_bytes.split(b'\n', 1)
+        except ValueError:
+            raise InvalidPackedBytes("Could not extract data section")
+        try:
+            header = unpackb(
+                header,
+                strict_map_key=True)
+        except(  # noqa
+                msgpack.exceptions.ExtraData,
+                msgpack.FormatError,
+                UnicodeEncodeError,
+                ValueError) as _:
+            raise InvalidPackedBytes("Could not decode packed bytes")
         self.header = header
         self.data = data
         self.additional_generator_args = list(additional_generator_args)
