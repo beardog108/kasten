@@ -2,6 +2,10 @@
 
 This project uses Semantic Versioning
 
+## 2.0.0
+
+- Removed encryption and signature stuff since that should be up to protocols
+
 
 ## 1.0.0
 

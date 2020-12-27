@@ -8,8 +8,8 @@ from kasten.generator import KastenBaseGenerator
 class TestBaseGenerator(unittest.TestCase):
     def test_base_generator(self):
 
-        k = b'\x95\xa3tst\x00\x00\xc0\xc0\ntest data'
-        invalid = b'\x95\xa3tst\x00\x00\xc0\xc0\ntest datb'
+        k = b'\x93\xa3tst\xce_\xe7\xfb\xfb\xc0\nTest'
+        invalid = b'\x93\xa3tst\xce_\xe7\xfb\xfb\xc0\nTes2'
 
         correct_K = KastenBaseGenerator.generate(k)
         hash_test = sha3_384(k).digest()

@@ -8,18 +8,18 @@ from kasten.generator import KastenBaseGenerator, pack
 
 class TestKastenBaseGenerator(unittest.TestCase):
     def test_kasten(self):
-        k = b'\x95\xa3tst\x00\x00\x92\xc4\x00\xc4\x00\xc0\ntest data'
+        k = b'\x93\xa3tst\xce_\xe7\xfb\xfb\xc0\nTest'
         K = Kasten(sha3_384(k).digest(), k, KastenBaseGenerator)
 
     def test_kasten_invalid(self):
-        k = b'\x95\xa3tst\x00\x00\x92\xc4\x00\xc4\x00\xc0\ntest data'
+        k = b'\x93\xa3tst\xce_\xe7\xfb\xfb\xc0\nTest'
         self.assertRaises(
             exceptions.InvalidID,
             Kasten, sha3_384(k + b'invalid').digest(), k, KastenBaseGenerator)
 
     def test_kasten_get_metadata(self):
         metadata = {"name": "john", "raw": b"are we having fun yet?"}
-        packed = pack.pack(b"test msg", "tst", 0, app_metadata=metadata)
+        packed = pack.pack(b"test msg", "tst", app_metadata=metadata)
         K = Kasten(sha3_384(packed).digest(), packed, KastenBaseGenerator)
         self.assertEqual(K.get_metadata(), metadata)
 
@@ -31,7 +31,7 @@ class TestKastenBaseGenerator(unittest.TestCase):
         metadata = {
             "name": "john", "raw": b"are we having fun yet?", "person": kevin}
         try:
-            packed = pack.pack(b"test msg", "tst", 0, app_metadata=metadata)
+            packed = pack.pack(b"test msg", "tst", app_metadata=metadata)
             K = Kasten(sha3_384(packed).digest(), packed, KastenBaseGenerator)
         except TypeError:
             pass

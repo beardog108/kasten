@@ -1,6 +1,4 @@
 """Main Kasten object, does nothing but provide access to packed Kasten bytes and call a specified generator function"""
-import traceback
-
 from msgpack import unpackb
 import msgpack
 
@@ -53,6 +51,7 @@ class Kasten:
         self.data = data
         self.additional_generator_args = list(additional_generator_args)
         self.additional_generator_kwargs = dict(additional_generator_kwargs)
+        int(self.get_timestamp())
         if auto_check_generator:
             self.check_generator()
 
@@ -60,7 +59,9 @@ class Kasten:
         packed = self.get_packed()
         if generator is None:
             self.generator.validate_id(
-                self.id, packed, *self.additional_generator_args, **self.additional_generator_kwargs)
+                self.id, packed,
+                *self.additional_generator_args,
+                **self.additional_generator_kwargs)
         else:
             generator(self.id, packed)
 
@@ -76,20 +77,11 @@ class Kasten:
                 return None
             return ret
         return pack.pack(self.data, self.get_data_type(),
-                         self.get_encryption_mode(),
-                         signer=_get_or_none(self.get_signer),
-                         signature=_get_or_none(self.get_signature),
                          app_metadata=_get_or_none(self.get_metadata),
                          timestamp=self.get_timestamp())
 
     def get_data_type(self) -> str: return self.header[0]
 
-    def get_encryption_mode(self): return self.header[1]
+    def get_timestamp(self): return self.header[1]
 
-    def get_timestamp(self): return self.header[2]
-
-    def get_signer(self): return self.header[3][0]
-
-    def get_signature(self): return self.header[3][1]
-
-    def get_metadata(self): return self.header[4]
+    def get_metadata(self): return self.header[2]

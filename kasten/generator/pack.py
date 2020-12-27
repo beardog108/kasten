@@ -10,12 +10,9 @@ hash authentication is dependending on the generator used.
 
 Packed bytes structure:
 0: type: str: 4bytesmax
-1: enc-mode: int: 0, 1, 2 (0=plaintext, 1=asymmetic, 2=symmetric).
-2. Timestamp: int
+1. Timestamp: int
 encrypted with specified mode:
- 3. signer: bytes (max 256bits)
- 4. signature: bytes (max 256bits)
- 5. app_metadata: arbitrary JSON
+3. app_metadata: arbitrary JSON
 \n
 data: bytes
 """
@@ -46,8 +43,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
 def pack(data: bytes, data_type: str,
-         enc_mode: 'KastenEncryptionModeID',
-         signer: bytes = None, signature: bytes = None,
          app_metadata: 'KastenSerializeableDict' = None,
          timestamp: int = None
          ) -> KastenPacked:
@@ -55,7 +50,7 @@ def pack(data: bytes, data_type: str,
 
 
     # Final data will be:
-    # msgpack.packb([data_type, enc_mode, timestamp, (signer, signature), {app_metadata}]) \
+    # msgpack.packb([data_type, timestamp, {app_metadata}]) \
     # + b'\n' + data
     # Ensure data type does not exceed 4 characters
     if not data_type or len(data_type) > 4:
@@ -66,21 +61,6 @@ def pack(data: bytes, data_type: str,
     except AttributeError:
         pass
 
-    if signer:
-        if signature is None:
-            raise ValueError("Signer specified without signature")
-    else:
-        signer = b''
-        signature = b''
-
-    # Ensure encryption mode is in [0, 100)
-    try:
-        enc_mode = int(enc_mode)
-    except (TypeError, ValueError):
-        raise exceptions.InvalidEncryptionMode
-    if not enc_mode >= 0 or enc_mode >= 100:
-        raise exceptions.InvalidEncryptionMode
-
     try:
         data = data.encode('utf8')
     except AttributeError:
@@ -89,9 +69,7 @@ def pack(data: bytes, data_type: str,
         timestamp = floor(time())
     timestamp = int(timestamp)
 
-    kasten_header = [data_type, enc_mode, timestamp]
-    kasten_header.append((signer, signature))
-    kasten_header.append(app_metadata)
+    kasten_header = [data_type, timestamp, app_metadata]
 
     kasten_header = packb(kasten_header) + b'\n'
     return kasten_header + data

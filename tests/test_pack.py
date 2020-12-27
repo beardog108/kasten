@@ -10,28 +10,26 @@ from kasten import exceptions
 
 class TestPack(unittest.TestCase):
 
-    def test_unsigned_pack(self):
+    def test_pack(self):
         data = os.urandom(10)
         t = floor(time())
-        packed = pack.pack(data, 'bin', 0)
+        packed = pack.pack(data, 'bin', timestamp=t)
         parts = packed.split(b'\n', 1)
         unpacked = unpackb(parts[0])
         self.assertEqual(unpacked[0], 'bin')
-        self.assertEqual(unpacked[1], 0)
-        self.assertAlmostEqual(unpacked[2], t)
-        self.assertEqual(len(unpacked), 5)
+        self.assertAlmostEqual(unpacked[1], t)
+        self.assertEqual(len(unpacked), 3)
 
-    def test_unsigned_with_meta(self):
+    def test_with_meta(self):
         data = os.urandom(10)
         t = floor(time())
-        packed = pack.pack(data, 'bin', 0, app_metadata={"meme": "doge"})
+        packed = pack.pack(data, 'bin', app_metadata={"meme": "doge"})
         parts = packed.split(b'\n', 1)
         unpacked = unpackb(parts[0])
         self.assertEqual(unpacked[0], 'bin')
-        self.assertEqual(unpacked[1], 0)
-        self.assertAlmostEqual(unpacked[2], t)
-        self.assertEqual(unpacked[4], {"meme": "doge"})
-        self.assertEqual(len(unpacked), 5)
+        self.assertAlmostEqual(unpacked[1], t)
+        self.assertEqual(unpacked[2], {"meme": "doge"})
+        self.assertEqual(len(unpacked), 3)
 
     def test_linebreak_data(self):
         data = os.urandom(10) + b'\n'
@@ -40,8 +38,7 @@ class TestPack(unittest.TestCase):
         parts = packed.split(b'\n', 1)
         unpacked = unpackb(parts[0])
         self.assertEqual(unpacked[0], 'bin')
-        self.assertEqual(unpacked[1], 0)
-        self.assertAlmostEqual(unpacked[2], t)
+        self.assertAlmostEqual(unpacked[1], t)
         self.assertEqual(len(unpacked[0]), 3)
 
     def test_invalid_data_type(self):
@@ -49,15 +46,6 @@ class TestPack(unittest.TestCase):
         self.assertRaises(exceptions.InvalidKastenTypeLength, pack.pack, data, '', 1)
         data = os.urandom(10)
         self.assertRaises(exceptions.InvalidKastenTypeLength, pack.pack, data, 'aaaaa', 1)
-
-    def test_invalid_enc_mode(self):
-        data = os.urandom(10)
-        self.assertRaises(exceptions.InvalidEncryptionMode, pack.pack, data, 'txt', None)
-        self.assertRaises(exceptions.InvalidEncryptionMode, pack.pack, data, 'txt', "100")
-        self.assertRaises(exceptions.InvalidEncryptionMode, pack.pack, data, 'txt', 100)
-        self.assertRaises(exceptions.InvalidEncryptionMode, pack.pack, data, 'txt', -1)
-        self.assertRaises(exceptions.InvalidEncryptionMode, pack.pack, data, 'txt', -5)
-        self.assertRaises(exceptions.InvalidEncryptionMode, pack.pack, data, 'txt', "test")
 
 
 
